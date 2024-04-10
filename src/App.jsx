@@ -7,6 +7,7 @@ import {
   addDoc,
   deleteDoc,
   doc,
+  onSnapshot,
 } from "firebase/firestore";
 import "./App.css";
 
@@ -28,19 +29,19 @@ function App() {
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const fetchBooks = async () => {
-      const colRef = collection(db, "books");
-      const querySnapshot = await getDocs(colRef);
+    const colRef = collection(db, "books");
 
+    const unsubscribe = onSnapshot(colRef, (querySnapshot) => {
       const fetchedBooks = [];
       querySnapshot.forEach((doc) => {
-        fetchedBooks.push(doc.data());
-        console.log(doc.data());
+        fetchedBooks.push({ id: doc.id, ...doc.data() });
       });
       setBooks(fetchedBooks);
-    };
+    });
 
-    fetchBooks();
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const handleSubmitBook = (event) => {
