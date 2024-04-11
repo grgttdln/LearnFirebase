@@ -14,6 +14,12 @@ import {
   where,
   orderBy,
 } from "firebase/firestore";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signOut,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import "./App.css";
 
 function App() {
@@ -27,6 +33,12 @@ function App() {
   const [arrangeBooksColl, setArrangeBooksColl] = useState([]);
   const [updateBookID, setUpdateBookID] = useState("");
   const [updateBookTitle, setUpdateBookTitle] = useState("");
+
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+
+  const [signEmail, setSignEmail] = useState("");
+  const [signPass, setSignPass] = useState("");
 
   useEffect(() => {
     const firebaseConfig = {
@@ -177,6 +189,38 @@ function App() {
     });
   };
 
+  const handleSignUpUser = (event) => {
+    event.preventDefault();
+
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, userEmail, userPassword).then(
+      (cred) => {
+        console.log(cred, cred.user);
+
+        userEmail = "";
+        userPassword = "";
+      },
+    );
+  };
+
+  const handleSignOut = (event) => {
+    event.preventDefault();
+
+    const auth = getAuth();
+    signOut(auth).then(() => {
+      console.log("user signed out");
+    });
+  };
+
+  const handleSignIn = (event) => {
+    event.preventDefault();
+
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, signEmail, signPass).then((cred) => {
+      console.log("user signed in", cred.user);
+    });
+  };
+
   return (
     <>
       <div>
@@ -298,6 +342,60 @@ function App() {
               type="text"
               value={updateBookID}
               onChange={(e) => setUpdateBookID(e.target.value)}
+            />
+          </div>
+          <input type="submit" />
+        </form>
+      </div>
+
+      <div>
+        <h1>Create User</h1>
+        <form onSubmit={handleSignUpUser}>
+          <div>
+            <label>Email: </label>
+            <input
+              type="text"
+              value={userEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
+            />
+          </div>
+          <div>
+            <label>Password: </label>
+            <input
+              type="text"
+              value={userPassword}
+              onChange={(e) => setUserPassword(e.target.value)}
+            />
+          </div>
+          <input type="submit" />
+        </form>
+      </div>
+
+      <div>
+        <form onClick={handleSignOut}>
+          <h1>Logout</h1>
+          <input type="submit" />
+        </form>
+      </div>
+
+      <div>
+        <h1>Log In</h1>
+
+        <form onClick={handleSignIn}>
+          <div>
+            <label>Email: </label>
+            <input
+              type="text"
+              value={signEmail}
+              onChange={(e) => setSignEmail(e.target.value)}
+            />
+          </div>
+          <div>
+            <label>Password: </label>
+            <input
+              type="text"
+              value={signPass}
+              onChange={(e) => setSignPass(e.target.value)}
             />
           </div>
           <input type="submit" />
