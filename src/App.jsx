@@ -10,6 +10,7 @@ import {
   onSnapshot,
   query,
   where,
+  orderBy,
 } from "firebase/firestore";
 import "./App.css";
 
@@ -20,6 +21,8 @@ function App() {
   const [bookID, setBookID] = useState("");
   const [findAuthor, setFindAuthor] = useState("");
   const [resultBooks, setResultBooks] = useState([]);
+  const [arrangeBooks, setArrangeBooks] = useState("");
+  const [arrangeBooksColl, setArrangeBooksColl] = useState([])
 
   useEffect(() => {
     const firebaseConfig = {
@@ -123,6 +126,33 @@ function App() {
     });
   };
 
+  const handleBookOrder = (event) => {
+    event.preventDefault();
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBe7NJHkJAWBwkrFRCaqy4kPi6fL1NPoXk",
+      authDomain: "learnfirebase-82d14.firebaseapp.com",
+      projectId: "learnfirebase-82d14",
+      storageBucket: "learnfirebase-82d14.appspot.com",
+      messagingSenderId: "491316288982",
+      appId: "1:491316288982:web:a355ef4411c9b31fcb9877",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const colRef = collection(db, "books");
+    const userQuery = query(colRef, orderBy("title", arrangeBooks));
+
+    onSnapshot(userQuery, (snapshot) => {
+      let books = [];
+      snapshot.docs.forEach((doc) => {
+        books.push({ id: doc.id, ...doc.data() });
+      });
+      setArrangeBooksColl(books)
+    });
+
+  };
+
   return (
     <>
       <div>
@@ -177,7 +207,7 @@ function App() {
       </div>
 
       <div>
-        <h1>Search a Book</h1>
+        <h1>Search a Book By Author</h1>
         <ul>
           {resultBooks.map((book, index) => (
             <li key={index}>{book.title}</li>
@@ -192,6 +222,31 @@ function App() {
               value={findAuthor}
               onChange={(e) => setFindAuthor(e.target.value)}
             />
+          </div>
+          <input type="submit" />
+        </form>
+      </div>
+
+      <div>
+        <h1>Order Books</h1>
+
+        <ul>
+          {arrangeBooksColl.map((book, index) => (
+            <li key={index}>{book.title}, {book.author}</li>
+          ))}
+        </ul>
+
+        <form onSubmit={handleBookOrder}>
+          <div>
+            <label>order by: </label>
+            <select
+              value={arrangeBooks}
+              onChange={(e) => setArrangeBooks(e.target.value)}
+            >
+              <option value="">Select Book Arrangement</option>
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
           </div>
           <input type="submit" />
         </form>
