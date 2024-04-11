@@ -19,6 +19,7 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   signInWithEmailAndPassword,
+  onAuthStateChanged
 } from "firebase/auth";
 import "./App.css";
 
@@ -201,6 +202,10 @@ function App() {
         userPassword = "";
       },
     );
+
+    onAuthStateChanged(auth, (user) => {
+      console.log("state change", user)
+    })
   };
 
   const handleSignOut = (event) => {
@@ -210,6 +215,10 @@ function App() {
     signOut(auth).then(() => {
       console.log("user signed out");
     });
+
+    onAuthStateChanged(auth, (user) => {
+      console.log("state change", user)
+    })
   };
 
   const handleSignIn = (event) => {
@@ -219,6 +228,10 @@ function App() {
     signInWithEmailAndPassword(auth, signEmail, signPass).then((cred) => {
       console.log("user signed in", cred.user);
     });
+
+    onAuthStateChanged(auth, (user) => {
+      console.log("state change", user)
+    })
   };
 
   return (
