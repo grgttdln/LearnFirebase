@@ -4,6 +4,7 @@ import {
   getFirestore,
   collection,
   getDocs,
+  getDoc,
   addDoc,
   deleteDoc,
   doc,
@@ -152,6 +153,26 @@ function App() {
     });
 
   };
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBe7NJHkJAWBwkrFRCaqy4kPi6fL1NPoXk",
+    authDomain: "learnfirebase-82d14.firebaseapp.com",
+    projectId: "learnfirebase-82d14",
+    storageBucket: "learnfirebase-82d14.appspot.com",
+    messagingSenderId: "491316288982",
+    appId: "1:491316288982:web:a355ef4411c9b31fcb9877",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const docRef = doc(db, 'books', '4hDMeeGqvFv4SmtC3755')
+
+  onSnapshot(docRef, (doc) => {
+    console.log(doc.data())
+  })
+
+
+
 
   return (
     <>
